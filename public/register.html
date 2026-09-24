@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>สมัครสมาชิก - Tumbler Shop</title>
+    <style>
+        :root { --bg-color: #f7f4ef; --primary: #c86d51; --primary-hover: #b05a40; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-card { background: #fff; padding: 35px 30px; border-radius: 16px; border: 1px solid #eae3d9; width: 100%; max-width: 340px; text-align: center; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 0.9em; font-weight: bold; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #eae3d9; box-sizing: border-box; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        .btn-main:hover { background: var(--primary-hover); }
+        .auth-footer { margin-top: 20px; font-size: 0.9em; }
+        .auth-footer a { color: var(--primary); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <h2>📝 สมัครสมาชิก</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>ชื่อผู้ใช้งาน (Username)</label>
+                <input type="text" id="reg_username" required placeholder="กรอกชื่อผู้ใช้">
+            </div>
+            <div class="form-group">
+                <label>รหัสผ่าน (Password)</label>
+                <input type="password" id="reg_password" required placeholder="กรอกรหัสผ่าน">
+            </div>
+            <div class="form-group">
+                <label>รหัสลับแอดมิน (ถ้ามี)</label>
+                <input type="password" id="reg_admin_secret" placeholder="กรอก รหัสผ่าน สำหรับรุ่นใหญ่">
+            </div>
+            <button type="submit" class="btn-main">ยืนยันการสมัคร</button>
+        </form>
+        <div class="auth-footer">
+            มีบัญชีผู้ใช้อยู่แล้ว? <a href="login.html">เข้าสู่ระบบ</a><br><br>
+            <a href="index.html" style="color: #8c7b75; font-weight: normal;">← กลับหน้าหลักร้านค้า</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('reg_username').value;
+            const password = document.getElementById('reg_password').value;
+            const adminSecret = document.getElementById('reg_admin_secret').value;
+            try {
+                const res = await fetch('http://127.0.0.1:3000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password,adminSecret })
+                    
+                });
+
+                const data = await res.json();
+                alert(data.message);
+
+                if (res.ok) {
+                    window.location.href = 'login.html';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('ไม่สามารถติดต่อ Server ได้ (เช็กว่ารัน node server.js หรือยัง)');
+            }
+        });
+    </script>
+</body>
+</html>

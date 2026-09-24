@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tumbler Store - ร้านขายแก้วเก็บความเย็น</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2f7e97;
+            --primary-hover: #1f5f74;
+            --bg-color: #eef5f6;
+            --card-bg: #ffffff;
+            --text-main: #0d2b36;
+            --text-muted: #5b6f74;
+            --accent-border: #dce8ea;
+            --coin-color: #c97c3d;
+            --shadow-sm: 0 4px 14px rgba(13, 43, 54, 0.05);
+            --shadow-lg: 0 24px 48px rgba(13, 43, 54, 0.14);
+
+            --navy: #0d2b36;
+            --steel-tint: #dcedf1;
+            --steel-light: #7cc2d6;
+            --copper: #c97c3d;
+            --copper-dark: #a8632c;
+            --copper-tint: #f8e6d3;
+            --ice: #cdeaf0;
+            --danger: #b23a48;
+            --danger-dark: #8f2836;
+            --success: #2f9e6e;
+            --lcd-bg: #072029;
+            --lcd-text: #8ee6c5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 10% 6%, rgba(47, 126, 151, 0.06), transparent 40%),
+                radial-gradient(circle at 94% 30%, rgba(201, 124, 61, 0.05), transparent 38%),
+                var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(14px);
+            padding: 14px 28px;
+            border-radius: 20px;
+            position: sticky;
+            top: 16px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(13, 43, 54, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            flex: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: linear-gradient(155deg, var(--steel-tint), #ffffff);
+            border: 1px solid var(--accent-border);
+        }
+
+        .logo-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', 'Kanit', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+        }
+
+        .logo-text .accent {
+            color: var(--copper);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .coin-badge {
+            background: linear-gradient(135deg, #fffaf3 0%, var(--copper-tint) 100%);
+            border: 1px solid #ecd2ab;
+            color: var(--copper-dark);
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .coin-badge span {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-action {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-action:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(31, 95, 116, 0.25);
+        }
+
+        .btn-secondary {
+            background: #7f9298;
+        }
+
+        .btn-secondary:hover {
+            background: #66767b;
+            box-shadow: 0 6px 16px rgba(102, 118, 123, 0.25);
+        }
+
+        .btn-dark {
+            background: var(--navy);
+        }
+
+        .btn-dark:hover {
+            background: #061921;
+            box-shadow: 0 6px 16px rgba(6, 25, 33, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+            box-shadow: 0 6px 16px rgba(143, 40, 54, 0.25);
+        }
+
+        .btn-installment {
+            background: var(--copper);
+        }
+
+        .btn-installment:hover {
+            background: var(--copper-dark);
+            box-shadow: 0 6px 16px rgba(168, 99, 44, 0.25);
+        }
+
+        .user-profile-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 16px;
+            border-left: 2px solid var(--accent-border);
+            margin-left: 4px;
+            flex-wrap: wrap;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            flex: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #fff;
+            text-transform: uppercase;
+            background: linear-gradient(155deg, var(--primary-color), var(--primary-hover));
+        }
+
+        /* ---------- Hero + Cold-Retention Gauge ---------- */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--primary-hover) 52%, var(--primary-color) 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 40px 48px;
+            margin: 28px 0 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 32px;
+            box-shadow: 0 20px 44px rgba(13, 43, 54, 0.28);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -8%;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-banner::before {
+            content: "";
+            position: absolute;
+            bottom: -60%;
+            left: -6%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(124, 194, 214, 0.18) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-banner h2 {
+            font-size: 2.1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .hero-banner p {
+            font-size: 1.02rem;
+            opacity: 0.88;
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+
+        .timer-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--lcd-bg);
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            box-shadow: inset 0 0 0 1px rgba(142, 230, 197, 0.15);
+        }
+
+        .timer-label {
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 500;
+        }
+
+        .timer-digit {
+            font-family: 'JetBrains Mono', monospace;
+            background: transparent;
+            color: var(--lcd-text);
+            padding: 2px 4px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: 0.03em;
+            text-shadow: 0 0 8px rgba(142, 230, 197, 0.55);
+        }
+
+        .timer-sep {
+            color: var(--lcd-text);
+            opacity: 0.6;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cold-gauge {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: none;
+        }
+
+        .gauge-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .thermo {
+            width: 38px;
+            height: 130px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thermo::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.35) 0 2px, transparent 2px 18px);
+            background-position: right 6px top 8px;
+            width: 8px;
+            left: auto;
+            right: 0;
+        }
+
+        .thermo-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80%;
+            background: linear-gradient(180deg, var(--ice), var(--steel-light));
+            border-radius: 0 0 20px 20px;
+        }
+
+        .thermo-bulb {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, var(--ice), var(--steel-light));
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            margin-top: -12px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ---------- Trust Badges ---------- */
+        .trust-badges {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .badge-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--accent-border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
+        }
+
+        .badge-box:hover {
+            transform: translateY(-3px);
+        }
+
+        .badge-icon {
+            width: 52px;
+            height: 52px;
+            flex: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            background: var(--steel-tint);
+        }
+
+        .badge-box:nth-child(2) .badge-icon {
+            background: var(--copper-tint);
+        }
+
+        /* ---------- Layout ---------- */
+        .main-container {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .filter-sidebar {
+            width: 280px;
+            flex: none;
+            background: var(--card-bg);
+            padding: 28px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-border);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 110px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-border);
+            background: #fbfdfd;
+            outline: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: 'Kanit', sans-serif;
+            color: var(--text-main);
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(47, 126, 151, 0.12);
+            background: white;
+        }
+
+        .category-pills {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .pill-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-border);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .pill-btn:hover,
+        .pill-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border-color: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(31, 95, 116, 0.22);
+        }
+
+        .product-area {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 28px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--accent-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-color) 50%, var(--coin-color) 50%, var(--coin-color) 100%);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: #cfe4e8;
+        }
+
+        .badge-tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(135deg, var(--copper), var(--copper-dark));
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(169, 99, 44, 0.3);
+            z-index: 2;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(160deg, var(--ice) 0%, #f2f9fa 55%, var(--steel-tint) 100%);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .card-img::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -30%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+            transform: skewX(-14deg);
+        }
+
+        .card:hover .card-img {
+            transform: scale(1.03);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: var(--primary-hover);
+            background: var(--steel-tint);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
+
+        .card-price {
+            font-family: 'Space Grotesk', 'Kanit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+
+        /* ---------- Modals ---------- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(7, 22, 28, 0.6);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--coin-color));
+            border-radius: 24px 24px 0 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #a9bcc0;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-border);
+            font-size: 1rem;
+            background: #fbfdfd;
+            transition: all 0.2s;
+            font-family: 'Kanit', sans-serif;
+            color: var(--text-main);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(47, 126, 151, 0.12);
+            background: white;
+        }
+
+        .payment-option {
+            margin: 10px 0;
+            padding: 16px;
+            border: 2px solid var(--accent-border);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .payment-option:hover {
+            border-color: #bcd4d9;
+            background: #f7fbfc;
+        }
+
+        .payment-option:has(input:checked) {
+            border-color: var(--primary-color);
+            background: var(--steel-tint);
+            box-shadow: 0 4px 12px rgba(47, 126, 151, 0.1);
+        }
+
+        .payment-option input[type="radio"] {
+            transform: scale(1.2);
+            accent-color: var(--primary-color);
+        }
+
+        .qr-panel {
+            margin: 4px 0 16px;
+            padding: 20px;
+            border: 1px dashed #bcd4d9;
+            border-radius: 14px;
+            background: var(--steel-tint);
+            text-align: center;
+        }
+
+        .qr-img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-hint {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--accent-border);
+        }
+
+        .cart-qty-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--accent-border);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+
+        .cart-qty-btn:hover {
+            background: var(--steel-tint);
+        }
+
+        /* ---------- Floating LINE Button ---------- */
+        .line-float-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 90px;
+            /* วางไว้เยื้องทางซ้ายของปุ่ม Back to Top เล็กน้อย */
+            background-color: #06C755;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            z-index: 90;
+            text-decoration: none;
+        }
+
+        .line-float-btn:hover {
+            transform: translateY(-4px);
+            background-color: #05b34c;
+        }
+
+        .line-float-btn svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+        }
+
+        /* ---------- Back to Top ---------- */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-border);
+            color: var(--text-main);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 90;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-4px);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 960px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .filter-sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 14px;
+            }
+
+            .header {
+                padding: 14px 18px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .user-profile-box {
+                border-left: none;
+                padding-left: 0;
+                margin-left: 0;
+                margin-top: 6px;
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .hero-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 28px 24px;
+            }
+
+            .cold-gauge {
+                flex-direction: row;
+                align-self: flex-start;
+            }
+
+            .thermo {
+                width: 30px;
+                height: 90px;
+            }
+
+            .thermo-bulb {
+                width: 42px;
+                height: 42px;
+                margin-top: -10px;
+            }
+
+            .trust-badges {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-card {
+                padding: 28px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 3h10l-1.1 15.2a3 3 0 0 1-3 2.8h-1.8a3 3 0 0 1-3-2.8L7 3Z" stroke="#1f5f74"
+                        stroke-width="1.6" stroke-linejoin="round" />
+                    <path d="M6.3 7h11.4" stroke="#1f5f74" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+            </span>
+            <span class="logo-text">Tumbler<span class="accent">Store</span></span>
+        </div>
+        <div class="header-actions">
+            <div class="coin-badge">
+                🪙 <span id="userCoins">0</span> Coins
+            </div>
+            <a href="installments.html" class="btn-action btn-installment">📋 ผ่อนชำระของฉัน</a>
+            <button type="button" class="btn-action btn-secondary" onclick="openHistoryModal()">📜
+                ประวัติสั่งซื้อ</button>
+            <button type="button" class="btn-action btn-dark" onclick="openCartModal()">🛒 ตะกร้า (<span
+                    id="cartCount">0</span>)</button>
+
+            <div class="user-profile-box" id="userAuthSection"></div>
+        </div>
+    </header>
+
+    <!-- Banner + Flash Sale Timer -->
+    <section class="hero-banner">
+        <div class="hero-text">
+            <h2>✨ แก้วเก็บความเย็นพรีเมียม สไตล์มินิมอล</h2>
+            <p>เก็บความเย็นยาวนาน 24 ชั่วโมง • สแตนเลส Food Grade 304/316 ปลอดภัย 100%</p>
+            <div class="timer-box">
+                <span class="timer-label">⚡ Flash Sale เหลือเวลาอีก</span>
+                <span class="timer-digit" id="timerH">04</span><span class="timer-sep">:</span>
+                <span class="timer-digit" id="timerM">12</span><span class="timer-sep">:</span>
+                <span class="timer-digit" id="timerS">59</span>
+            </div>
+        </div>
+        <div class="cold-gauge" aria-hidden="true">
+            <span class="gauge-label">-24H</span>
+            <div class="thermo">
+                <div class="thermo-fill"></div>
+            </div>
+            <div class="thermo-bulb"></div>
+        </div>
+    </section>
+
+    <!-- Badges -->
+    <section class="trust-badges">
+        <div class="badge-box">
+            <span class="badge-icon">🚚</span>
+            <div><b style="font-size:1.1rem;">จัดส่งฟรีทั่วไทย</b><br><small
+                    style="color:var(--text-muted);">เมื่อช้อปครบ 500 บาท</small></div>
+        </div>
+        <div class="badge-box">
+            <span class="badge-icon">🧊</span>
+            <div><b style="font-size:1.1rem;">ประกันเก็บเย็น 24 ชม.</b><br><small
+                    style="color:var(--text-muted);">ไอน้ำไม่เกาะรอบแก้ว</small></div>
+        </div>
+        <div class="badge-box">
+            <span class="badge-icon">🛡️</span>
+            <div><b style="font-size:1.1rem;">ของแท้ 100%</b><br><small style="color:var(--text-muted);">สแตนเลสมาตรฐาน
+                    Food Grade</small></div>
+        </div>
+    </section>
+
+    <!-- Content Layout -->
+    <div class="main-container">
+        <!-- Sidebar Filter -->
+        <aside class="filter-sidebar">
+            <h4 style="margin-bottom: 20px; font-size: 1.2rem; display:flex; align-items:center; gap:8px;">🔍
+                ค้นหาสินค้า</h4>
+            <div class="filter-group">
+                <label>ค้นหาชื่อ / สี</label>
+                <input type="text" id="searchInput" placeholder="พิมพ์ชื่อแก้ว หรือ สี...">
+            </div>
+            <div class="filter-group">
+                <label>แบรนด์</label>
+                <select id="brandFilter">
+                    <option value="">-- เลือกทุกแบรนด์ --</option>
+                    <option value="Stanley">Stanley</option>
+                    <option value="Yeti">Yeti</option>
+                    <option value="Tyeso">Tyeso</option>
+                    <option value="Hydro Flask">Hydro Flask</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>ราคาสูงสุด (บาท)</label>
+                <input type="number" id="maxPriceInput" placeholder="เช่น 1000">
+            </div>
+            <button type="button" class="btn-action" style="width:100%; justify-content:center; margin-top: 8px;"
+                onclick="loadProducts()">ค้นหาด่วน</button>
+        </aside>
+
+        <!-- Product Area + Quick Category Pills -->
+        <div class="product-area">
+            <div class="category-pills">
+                <button type="button" class="pill-btn active" onclick="quickFilterBrand('', this)">✨ ทั้งหมด</button>
+                <button type="button" class="pill-btn" onclick="quickFilterBrand('Stanley', this)">🥤 Stanley</button>
+                <button type="button" class="pill-btn" onclick="quickFilterBrand('Yeti', this)">🧊 Yeti</button>
+                <button type="button" class="pill-btn" onclick="quickFilterBrand('Tyeso', this)">🎨 Tyeso</button>
+                <button type="button" class="pill-btn" onclick="quickFilterBrand('Hydro Flask', this)">🏔️ Hydro
+                    Flask</button>
+            </div>
+
+            <main class="product-grid" id="productList"></main>
+        </div>
+    </div>
+
+    <!-- Modal 1: Cart & Checkout -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-card">
+            <span class="modal-close" onclick="closeCartModal()">&times;</span>
+            <h3 style="margin-bottom:20px; font-size:1.5rem;">💳 ตะกร้าสินค้า & ชำระเงิน</h3>
+
+            <div id="cartItemsContainer"></div>
+
+            <div style="margin: 24px 0; text-align:right;">
+                <h4 style="font-size:1.2rem; color:var(--text-muted);">ยอดรวมทั้งสิ้น: <span id="totalCartPrice"
+                        style="color:var(--primary-color); font-size:1.8rem; font-weight:600; margin-left:8px;">0</span>
+                    บาท</h4>
+            </div>
+
+            <hr style="border:none; border-top:1px solid var(--accent-border); margin-bottom:24px;">
+
+            <form onsubmit="processPayment(event)">
+                <h4 style="margin-bottom:16px; font-size:1.1rem;">📍 ข้อมูลผู้รับสินค้า</h4>
+                <input type="text" id="cust_name" class="form-control" required placeholder="ชื่อ-นามสกุล ผู้รับ">
+                <input type="tel" id="cust_phone" class="form-control" required placeholder="เบอร์โทรศัพท์ติดต่อ">
+                <input type="text" id="cust_address" class="form-control" required
+                    placeholder="ที่อยู่จัดส่งโดยละเอียด">
+
+                <h4 style="margin: 20px 0 12px 0; font-size:1.1rem;">💳 เลือกช่องทางการชำระเงิน</h4>
+                <label class="payment-option">
+                    <input type="radio" name="pay_method" value="PromptPay QR" checked onchange="toggleQRPanel()"> 📱
+                    สแกน QR Code PromptPay
+                </label>
+
+                <div class="qr-panel" id="qrPanel">
+                    <img src="promptpay-qr.png" alt="PromptPay QR Code ร้าน Tumbler Store" class="qr-img">
+                    <p class="qr-hint">เปิดแอปธนาคารแล้วสแกน QR นี้เพื่อชำระเงิน</p>
+                </div>
+
+                <label class="payment-option">
+                    <input type="radio" name="pay_method" value="Tumbler Coin" onchange="toggleQRPanel()"> 🪙 ชำระผ่าน
+                    Tumbler Coin
+                </label>
+
+                <button type="submit" class="btn-action"
+                    style="width:100%; justify-content:center; padding:16px; margin-top:24px; font-size:1.1rem;">
+                    ✅ ยืนยันการสั่งซื้อสินค้า
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Order History -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-card">
+            <span class="modal-close" onclick="closeHistoryModal()">&times;</span>
+            <h3 style="margin-bottom:20px; font-size:1.5rem;">📜 ประวัติการสั่งซื้อของคุณ</h3>
+            <div id="historyOrdersList"></div>
+        </div>
+    </div>
+
+    <!-- ปุ่มติดต่อ LINE แบบลอยมุมขวาล่าง -->
+    <a href="https://line.me/ti/p/rB5YxBJGbh" target="_blank" class="line-float-btn" title="ติดต่อเราผ่าน LINE">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+            <path
+                d="M272.1 204.3v71.1h-55.3v71.1h55.3v71.1H145.7V133.2h126.4v71.1zm131.5-71.1v213.3c0 39.3-32 71.1-71.1 71.1H115.6c-39.3 0-71.1-32-71.1-71.1V133.2c0-39.3 32-71.1 71.1-71.1h216.9c39.1 0 71.1 32 71.1 71.1z" />
+        </svg>
+    </a>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">⬆️</button>
+
+    <!-- Script Logic -->
+    <script>
+        let cart = [];
+
+        function getCurrentUser() {
+            try {
+                const userJson = localStorage.getItem('user');
+                return userJson ? JSON.parse(userJson) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function initials(name) {
+            return (name || '?').trim().charAt(0).toUpperCase();
+        }
+
+        function renderAuthUI() {
+            const authSection = document.getElementById('userAuthSection');
+            const coinsEl = document.getElementById('userCoins');
+            const user = getCurrentUser();
+
+            if (user && user.username) {
+                authSection.innerHTML = `
+                    <span class="user-avatar">${initials(user.username)}</span>
+                    <span style="font-weight: 500; margin-right: 4px;">${user.username}</span>
+                    ${user.role === 'admin' ? '<a href="admin.html" class="btn-action btn-danger" style="font-size:0.85rem; padding:6px 12px; margin-right:4px;">⚙️ Admin</a>' : ''}
+                    <button type="button" onclick="logout()" class="btn-action btn-secondary" style="font-size:0.85rem; padding:6px 12px;">
+                        ออกจากระบบ
+                    </button>
+                `;
+                if (coinsEl) coinsEl.innerText = Number(user.coins || 0).toLocaleString();
+            } else {
+                authSection.innerHTML = `
+                    <a href="login.html" class="btn-action" style="margin-right:4px;">เข้าสู่ระบบ</a>
+                    <a href="register.html" class="btn-action btn-secondary">สมัครสมาชิก</a>
+                `;
+                if (coinsEl) coinsEl.innerText = '0';
+            }
+        }
+
+        function logout() {
+            if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
+                localStorage.removeItem('user');
+                alert('ออกจากระบบเรียบร้อยแล้ว');
+                window.location.reload();
+            }
+        }
+
+        function getColorHex(colorName) {
+            const map = {
+                'ดำ': '#2c3e50',
+                'ขาว': '#ecf0f1',
+                'ชมพู': '#ffb6c1',
+                'เงิน': '#bdc3c7',
+                'ฟ้า': '#3498db',
+                'เขียว': '#2ecc71',
+                'ทอง': '#f1c40f',
+                'ม่วง': '#9b59b6',
+                'แดง': '#e74c3c',
+                'กรมท่า': '#1abc9c'
+            };
+            if (!colorName) return '#95a5a6';
+            for (let key in map) {
+                if (colorName.trim().includes(key)) return map[key];
+            }
+            return '#95a5a6';
+        }
+
+        function loadProducts() {
+            const search = document.getElementById('searchInput').value;
+            const brand = document.getElementById('brandFilter').value;
+            const maxPrice = document.getElementById('maxPriceInput').value;
+
+            let url = `http://127.0.0.1:3000/api/products?search=${encodeURIComponent(search)}&brand=${encodeURIComponent(brand)}`;
+            if (maxPrice) url += `&max_price=${maxPrice}`;
+
+            fetch(url)
+                .then(res => res.json())
+                .then(products => {
+                    const grid = document.getElementById('productList');
+                    if (!products || products.length === 0) {
+                        grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:40px; font-size:1.1rem;">ไม่พบสินค้าที่ตรงตามเงื่อนไข</p>';
+                        return;
+                    }
+                    grid.innerHTML = products.map((p, index) => {
+                        const isHot = index % 3 === 0;
+                        const productName = p.name || p.product_name || p.title || 'แก้วเก็บความเย็น';
+                        const brandName = p.brand || p.brand_name || 'Tumbler';
+                        const capacity = p.capacity_oz || p.capacity || '20';
+                        const colorName = p.color_name || p.color || 'Standard';
+                        const variantId = p.variant_id || p.id || p.product_id;
+                        const price = Number(p.price || 0);
+                        const hexColor = getColorHex(p.color_name);
+                        return `
+                            <div class="card">
+                                ${isHot ? '<span class="badge-tag">HOT 🔥</span>' : ''}
+                                <div class="card-img">🥤</div>
+                                <div>
+                                    <div class="card-meta">${brandName} • ${capacity}</div>
+                                    <div class="card-title">${productName}</div>
+                                    <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; justify-content:center;">
+                                        <span class="color-dot" style="background:${hexColor};"></span> สี: ${p.color_name}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="card-price">${Number(p.price).toLocaleString()} ฿</div>
+                                    <div style="display:flex; gap:8px; flex-direction:column;">
+                                        <button type="button" class="btn-action btn-dark" style="width:100%; justify-content:center; padding:10px;" onclick="addToCart('${p.variant_id}', '${p.name} (${p.color_name})', ${p.price})">
+                                            🛒 เพิ่มลงตะกร้า
+                                        </button>
+                                        <button type="button" class="btn-action btn-installment" style="width:100%; justify-content:center; padding:10px;" onclick="createInstallmentPlan('${p.variant_id}', ${p.price})">
+                                            💳 ผ่อนชำระสินค้า
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                })
+                .catch(err => console.error('Error loading products:', err));
+        }
+
+        function quickFilterBrand(brandName, btnEl) {
+            document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            document.getElementById('brandFilter').value = brandName;
+            loadProducts();
+        }
+
+        // ฟังก์ชันสำหรับระบบผ่อนชำระ
+        async function createInstallmentPlan(variantId, totalPrice) {
+            const user = getCurrentUser();
+
+            if (!user) {
+                alert('กรุณาเข้าสู่ระบบก่อนทำรายการผ่อนชำระ');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const monthsStr = prompt('เลือกจำนวนงวดที่ต้องการผ่อน (เช่น 3, 6, 10 เดือน):');
+            if (!monthsStr) return;
+            const months = parseInt(monthsStr);
+
+            if (isNaN(months) || months <= 0) {
+                alert('กรุณากรอกจำนวนเดือนให้ถูกต้อง');
+                return;
+            }
+
+            try {
+                const res = await fetch('http://127.0.0.1:3000/api/installments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: user.user_id,
+                        variant_id: variantId,
+                        total_price: totalPrice,
+                        months: months
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert('สร้างสัญญาผ่อนชำระสำเร็จ!');
+                    window.location.href = 'installments.html';
+                } else {
+                    alert(data.error || 'เกิดข้อผิดพลาด');
+                }
+            } catch (err) {
+                alert('ไม่สามารถเชื่อมต่อกับ Server ได้');
+            }
+        }
+
+        function addToCart(id, name, price) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty++;
+            } else {
+                cart.push({ id, name, price, qty: 1 });
+            }
+            updateCartUI();
+
+            const cartBtn = document.querySelector(`button[onclick*="addToCart('${id}'"]`);
+            if (cartBtn) {
+                const originalText = cartBtn.innerHTML;
+                cartBtn.innerHTML = "✅ เพิ่มแล้ว!";
+                cartBtn.style.background = "var(--success)";
+                setTimeout(() => {
+                    cartBtn.innerHTML = originalText;
+                    cartBtn.style.background = "";
+                }, 1000);
+            }
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const cartCountEl = document.getElementById('cartCount');
+            const cartContainer = document.getElementById('cartItemsContainer');
+            const totalCartPriceEl = document.getElementById('totalCartPrice');
+
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            cartCountEl.innerText = totalQty;
+
+            let totalPrice = 0;
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:40px 20px;">ไม่มีสินค้าในตะกร้า 🛒</p>';
+            } else {
+                cartContainer.innerHTML = cart.map(i => {
+                    const itemSubtotal = i.price * i.qty;
+                    totalPrice += itemSubtotal;
+                    return `
+                        <div class="cart-item">
+                            <div>
+                                <div style="font-weight:600; font-size:1.05rem;">${i.name}</div>
+                                <div style="color:var(--primary-color); margin-top:4px;">${Number(i.price).toLocaleString()} ฿ <span style="color:var(--text-muted); font-size:0.9rem;">/ ชิ้น</span></div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <button type="button" class="cart-qty-btn" onclick="changeQty('${i.id}', -1)">-</button>
+                                <span style="font-size:1.1rem; width:20px; text-align:center;"><b>${i.qty}</b></span>
+                                <button type="button" class="cart-qty-btn" onclick="changeQty('${i.id}', 1)">+</button>
+                                <span style="min-width:80px; text-align:right; font-weight:600; font-size:1.1rem;">${itemSubtotal.toLocaleString()} ฿</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            totalCartPriceEl.innerText = totalPrice.toLocaleString();
+        }
+
+        function toggleQRPanel() {
+            const method = document.querySelector('input[name="pay_method"]:checked').value;
+            document.getElementById('qrPanel').style.display = (method === 'PromptPay QR') ? 'block' : 'none';
+        }
+
+        function openCartModal() { document.getElementById('checkoutModal').style.display = 'flex'; }
+        function closeCartModal() { document.getElementById('checkoutModal').style.display = 'none'; }
+
+        function openHistoryModal() {
+            const user = getCurrentUser();
+            if (!user) return alert('กรุณาเข้าสู่ระบบเพื่อดูประวัติการสั่งซื้อ');
+            document.getElementById('historyModal').style.display = 'flex';
+
+            fetch(`http://127.0.0.1:3000/api/orders/user/${user.user_id}`)
+                .then(res => res.json())
+                .then(orders => {
+                    const container = document.getElementById('historyOrdersList');
+                    if (!orders || orders.length === 0) {
+                        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:40px 20px;">ยังไม่มีประวัติการสั่งซื้อ</p>';
+                        return;
+                    }
+                    container.innerHTML = orders.map(o => `
+                        <div style="border:1px solid var(--accent-border); padding:16px; border-radius:12px; margin-bottom:12px; background:#f7fbfc;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                                <b style="font-size:1.1rem;">ออเดอร์ #${o.order_id}</b>
+                                <span style="color:var(--primary-color); font-weight:600; font-size:1.1rem;">${Number(o.total_amount).toLocaleString()} ฿</span>
+                            </div>
+                            <div style="font-size:0.9rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                <span>💳 ${o.payment_method}</span>
+                                <span>📅 ${new Date(o.created_at).toLocaleString('th-TH')}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                });
+        }
+        function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
+
+        async function processPayment(e) {
+            e.preventDefault();
+            if (cart.length === 0) return alert('โปรดเลือกสินค้าลงตะกร้าอย่างน้อย 1 ชิ้น');
+
+            const user = getCurrentUser();
+            const method = document.querySelector('input[name="pay_method"]:checked').value;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            if (method === 'Tumbler Coin' && (!user || user.coins < total)) {
+                return alert('จำนวน Tumbler Coins ไม่พอชำระเงิน กรุณาติดต่อ Admin เพื่อเติมเงิน');
+            }
+
+            const payload = {
+                user_id: user ? user.user_id : null,
+                cust_name: document.getElementById('cust_name').value,
+                cust_phone: document.getElementById('cust_phone').value,
+                address: document.getElementById('cust_address').value,
+                payment_method: method,
+                total_amount: total,
+                items: cart,
+            };
+
+            const res = await fetch('http://127.0.0.1:3000/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                if (method === 'Tumbler Coin' && user) {
+                    user.coins -= total;
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+                alert('สั่งซื้อสินค้าสำเร็จ! ขอบคุณที่อุดหนุนครับ 🎉');
+                cart = [];
+                updateCartUI();
+                closeCartModal();
+                renderAuthUI();
+                document.getElementById('cust_name').value = '';
+                document.getElementById('cust_phone').value = '';
+                document.getElementById('cust_address').value = '';
+            } else {
+                alert('เกิดข้อผิดพลาดในการสั่งซื้อ');
+            }
+        }
+
+        function startTimer() {
+            let h = 4, m = 12, s = 59;
+            setInterval(() => {
+                s--;
+                if (s < 0) { s = 59; m--; }
+                if (m < 0) { m = 59; h--; }
+                if (h < 0) { h = 4; m = 12; s = 59; }
+                document.getElementById('timerH').innerText = String(h).padStart(2, '0');
+                document.getElementById('timerM').innerText = String(m).padStart(2, '0');
+                document.getElementById('timerS').innerText = String(s).padStart(2, '0');
+            }, 1000);
+        }
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTopBtn');
+            if (window.scrollY > 300) {
+                btn.classList.add('show');
+            } else {
+                btn.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAuthUI();
+            loadProducts();
+            startTimer();
+            toggleQRPanel();
+        });
+    </script>
+</body>
+
+</html>

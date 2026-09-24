@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # 1. Database Server (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: tumbler_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: tumbler_shop
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # นำไฟล์ SQL มาสร้างตารางอัตโนมัติเมื่อเปิด Container ครั้งแรก
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
+
+  # 2. Database Management Tool (phpMyAdmin)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: tumbler_phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - db
+
+  # 3. Node.js Backend API
+  app:
+    build: .
+    container_name: tumbler_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: tumbler_shop
+      PORT: 3000
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  mysql_data:

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เข้าสู่ระบบ - Tumbler Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background: #f7f4ef; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 32px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        input { width: 100%; padding: 10px; margin: 8px 0 16px; border-radius: 8px; border: 1px solid #eae3d9; }
+        button { width: 100%; background: #c86d51; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3 style="text-align: center; margin-bottom: 16px;">🔐 เข้าสู่ระบบ</h3>
+        <form onsubmit="handleLogin(event)">
+            <label>Username</label>
+            <input type="text" id="username" required>
+            <label>Password</label>
+            <input type="password" id="password" required>
+            <button type="submit">เข้าสู่ระบบ</button>
+        </form>
+        <p style="text-align: center; margin-top: 16px; font-size: 0.9rem;">
+            ยังไม่มีบัญชี? <a href="register.html" style="color:#c86d51;">สมัครสมาชิก</a>
+        </p>
+    </div>
+
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('http://127.0.0.1:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    // **จุดสำคัญ:** บันทึกข้อมูลสิทธิ์เข้า LocalStorage
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    alert('เข้าสู่ระบบสำเร็จ!');
+                    window.location.href = 'index.html';
+                } else {
+                    alert(data.error || 'Username หรือ Password ไม่ถูกต้อง');
+                }
+            } catch (err) {
+                alert('ไม่สามารถติดต่อ Server ได้ (กรุณาตรวจสอบ node server.js)');
+            }
+        }
+    </script>
+</body>
+</html>

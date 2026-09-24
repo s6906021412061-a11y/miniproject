@@ -1,0 +1,106 @@
+									--------- XAMPP ---------
+			http://localhost/phpmyadmin/
+
+-- 1. เคลียร์ตารางเก่า (ถ้ามี) เพื่อสร้างใหม่ให้ไม่ซ้ำซ้อน
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS product_variants;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- 2. สร้างตารางสำหรับเก็บข้อมูลผู้ใช้งาน (Users)
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    coins DECIMAL(10, 2) DEFAULT 0.00,
+    role VARCHAR(20) DEFAULT 'customer', -- 'customer' หรือ 'admin'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. สร้างตารางสำหรับเก็บข้อมูลสินค้าหลัก (Products)
+CREATE TABLE products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    brand VARCHAR(100) NOT NULL,
+    capacity_oz INT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. สร้างตารางสำหรับเก็บตัวเลือกสินค้า (Variants - สี, ราคา, สต็อก)
+CREATE TABLE product_variants (
+    variant_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    color_name VARCHAR(50) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    stock INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- 5. สร้างตารางสำหรับเก็บข้อมูลคำสั่งซื้อ (Orders)
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL,
+    cust_name VARCHAR(150) NOT NULL,
+    cust_phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+-- 6. สร้างตารางสำหรับเก็บรายการสินค้าในแต่ละคำสั่งซื้อ (Order Items)
+CREATE TABLE order_items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    variant_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (variant_id) REFERENCES product_variants(variant_id) ON DELETE CASCADE
+);
+
+-- ==========================================
+-- ข้อมูลตัวอย่าง (Sample Data) พร้อมใช้งาน
+-- ==========================================
+
+-- เพิ่มผู้ใช้ระบบ (Admin และ ลูกค้าทั่วไป)
+INSERT INTO users (username, email, password, coins, role) VALUES 
+('Admin Store', 'admin@tumbler.com', '123456', 5000.00, 'admin'),
+('John Doe', 'john@gmail.com', '123456', 1000.00, 'customer');
+
+-- เพิ่มรายการสินค้าหลัก
+INSERT INTO products (product_id, name, brand, capacity_oz, description) VALUES 
+(1, 'Stanley Quencher H2.0', 'Stanley', 40, 'แก้วเก็บความเย็นยอดฮิต พร้อมหลอดและหูหิ้ว ดีไซน์พรีเมียม'),
+(2, 'Yeti Rambler Tumbler', 'Yeti', 30, 'แก้วสแตนเลสสตีล ไอน้ำไม่เกาะรอบแก้ว ทนทานพิเศษ'),
+(3, 'Tyeso Classic Mug', 'Tyeso', 20, 'แก้วน้ำมินิมอล พร้อมฝาปิดกันน้ำหก พกพาสะดวก'),
+(4, 'Hydro Flask All Around', 'Hydro Flask', 32, 'แก้วเก็บความเย็นสไตล์แคมป์ปิ้ง เก็บอุณหภูมิยอดเยี่ยม');
+
+-- เพิ่มตัวเลือกสินค้า (สีเรียบ / ลายการ์ตูน พร้อมราคาและสต็อก)
+INSERT INTO product_variants (product_id, color_name, price, stock) VALUES 
+(1, 'ชมพูพาสเทล (สีเรียบ)', 1490.00, 25),
+(1, 'เขียวมัทฉะ (สีเรียบ)', 1490.00, 15),
+(1, 'ลายการ์ตูนยูนิคอร์น (ลายการ์ตูน)', 1690.00, 10),
+(2, 'ดำด้าน (สีเรียบ)', 1290.00, 30),
+(2, 'ฟ้าทะเล (สีเรียบ)', 1290.00, 10),
+(3, 'ครีมมินิมอล (สีเรียบ)', 390.00, 50),
+(3, 'ลายการ์ตูนหมีน้อย (ลายการ์ตูน)', 450.00, 40),
+(4, 'เหลืองซันชายน์ (สีเรียบ)', 1590.00, 20);
+
+-- 1. ตารางตารางงวดผ่อนชำระ (Installment Schedules)
+CREATE TABLE installment_schedules (
+    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    installment_id INT NOT NULL,
+    period_no INT NOT NULL,              -- งวดที่ (เช่น งวดที่ 1, 2, 3...)
+    due_date DATE NOT NULL,             -- วันที่ครบกำหนดชำระ
+    amount DECIMAL(10,2) NOT NULL,      -- ยอดเงินที่ต้องชำระในงวดนี้
+    status VARCHAR(30) DEFAULT 'Pending', -- สถานะ: Pending (รอชำระ), Paid (ชำระแล้ว), Overdue (เกินกำหนด)
+    paid_at TIMESTAMP NULL,             -- วันเวลาที่ชำระเงินจริง
+    FOREIGN KEY (installment_id) REFERENCES installments(installment_id) ON DELETE CASCADE
+);
+

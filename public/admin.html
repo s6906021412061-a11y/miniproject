@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Tumbler Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --navy:#0d2b36; --ink:#3a4d52; --bg:#eef5f6; --card:#ffffff;
+        --steel:#2f7e97; --steel-dark:#1f5f74; --steel-tint:#dcedf1;
+        --copper:#c97c3d; --copper-dark:#a8632c; --copper-tint:#f8e6d3;
+        --mist:#dce8ea; --mist-2:#eef3f4; --radius:16px;
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:'Kanit', sans-serif; background:var(--bg); color:var(--navy); padding:40px 20px; min-height:100vh; }
+    .wrap{ max-width:1100px; margin:0 auto; }
+    .container{ background:var(--card); border-radius:var(--radius); box-shadow:0 20px 45px rgba(13,43,54,0.08); padding:32px; margin-bottom:24px; }
+    .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--mist); padding-bottom:16px; }
+    h2{ font-size:1.4rem; color:var(--navy); }
+    h3{ font-size:1.1rem; color:var(--steel-dark); margin-bottom:16px; }
+    .home-link{ color:var(--steel-dark); text-decoration:none; font-weight:500; padding:8px 16px; border:1px solid var(--mist); border-radius:99px; }
+    .home-link:hover{ background:var(--mist-2); }
+    
+    table{ width:100%; border-collapse:collapse; margin-top:10px; background:#fff; border-radius:8px; overflow:hidden; }
+    th, td{ padding:12px; text-align:left; font-size:0.9rem; border-bottom:1px solid var(--mist); vertical-align:middle; }
+    th{ background:var(--steel-tint); color:var(--steel-dark); font-family:'Space Grotesk', sans-serif; }
+    
+    .btn{ border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-family:'Kanit', sans-serif; font-size:0.85rem; font-weight:500; }
+    .btn-approve{ background:#2e7d32; color:#fff; }
+    .btn-approve:hover{ background:#1b5e20; }
+    .btn-coins{ background:var(--copper); color:#fff; }
+    .btn-coins:hover{ background:var(--copper-dark); }
+    .btn-del{ background:#c62828; color:#fff; }
+    .btn-del:hover{ background:#8e0000; }
+    
+    .slip-thumb{ width:50px; height:50px; object-fit:cover; border-radius:6px; cursor:pointer; border:1px solid var(--mist); }
+    .slip-thumb:hover{ opacity:0.8; }
+
+    /* Modal สำหรับดูรูปสลิปขนาดใหญ่ */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(13,43,54,0.7); align-items: center; justify-content: center; }
+    .modal-content { background: #fff; padding: 20px; border-radius: 12px; max-width: 500px; text-align: center; position: relative; }
+    .modal-content img { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; margin-top: 10px; }
+    .close-modal { position: absolute; right: 15px; top: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    
+    <!-- ส่วนที่ 1: ตรวจสอบและอนุมัติสลิปผ่อนชำระ -->
+    <div class="container">
+      <div class="header">
+        <h2>🔍 ตรวจสอบและอนุมัติสลิปค่างวด (QR พร้อมเพย์)</h2>
+        <a href="index.html" class="home-link">← กลับหน้าหลัก</a>
+      </div>
+      <div id="approvalList">กำลังโหลดรายการรออนุมัติ...</div>
+    </div>
+
+    <!-- ส่วนที่ 2: จัดการผู้ใช้งานเดิม -->
+    <div class="container">
+      <h3>👥 ระบบจัดการผู้ใช้งานและเติม Coins</h3>
+      <div id="userList">กำลังโหลดรายชื่อผู้ใช้...</div>
+    </div>
+
+  </div>
+
+  <!-- Modal ดูรูปสลิป -->
+  <div id="slipModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeSlipModal()">✕</button>
+      <h3>หลักฐานการชำระเงิน (สลิป)</h3>
+      <img id="modalSlipImg" src="" alt="Slip">
+    </div>
+  </div>
+
+  <script>
+    const userJson = localStorage.getItem('user');
+    const currentUser = userJson ? JSON.parse(userJson) : null;
+
+    if (!currentUser || currentUser.role !== 'admin') {
+        alert('สำหรับผู้ดูแลระบบ (Admin) เท่านั้น');
+        window.location.href = 'index.html';
+    }
+
+    // โหลดรายชื่อผู้ใช้ทั้งหมด
+    async function loadUsers() {
+        const container = document.getElementById('userList');
+        try {
+            const res = await fetch('http://127.0.0.1:3000/api/users');
+            const users = await res.json();
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>ชื่อ - เบอร์โทร</th>
+                            <th>สิทธิ์</th>
+                            <th>Coins ปัจจุบัน</th>
+                            <th>จัดการสิทธิ์ / เหรียญ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            users.forEach(u => {
+                html += `
+                    <tr>
+                        <td>#${u.user_id}</td>
+                        <td><b>${u.username}</b></td>
+                        <td>${u.fullname || '-'}<br><small style="color:var(--ink);">${u.phone || '-'}</small></td>
+                        <td><span style="background:${u.role==='admin'?'var(--steel-tint)':'var(--mist-2)'}; padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:600; color:${u.role==='admin'?'var(--steel-dark)':'var(--navy)'};">${u.role.toUpperCase()}</span></td>
+                        <td>🪙 ${Number(u.coins).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-coins" onclick="topupCoins(${u.user_id})">➕ เติม Coins</button>
+                            ${u.user_id !== currentUser.user_id ? `<button class="btn btn-del" onclick="deleteUser(${u.user_id})">🗑 ลบ</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        } catch (err) {
+            container.innerHTML = '<p style="color:red;">โหลดข้อมูลผู้ใช้ไม่สำเร็จ</p>';
+        }
+    }
+
+    // โหลดรายการที่รออนุมัติสลิป (เพิ่ม API ฝั่ง Server ด้านล่างหากยังไม่มี)
+    async function loadApprovals() {
+        const container = document.getElementById('approvalList');
+        try {
+            const res = await fetch('http://127.0.0.1:3000/api/installments/pending-approvals');
+            const list = await res.json();
+
+            if (!list || list.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--ink); padding:20px;">🎉 ไม่มีรายการรอดำเนินการตรวจสอบสลิปในขณะนี้</p>';
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>งวดที่</th>
+                            <th>ผู้ใช้งาน</th>
+                            <th>สินค้า</th>
+                            <th>ยอดชำระ</th>
+                            <th>สลิปโอนเงิน</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            list.forEach(item => {
+                const slipUrl = `http://127.0.0.1:3000/uploads/${item.slip_image}`;
+                html += `
+                    <tr>
+                        <td>งวดที่ ${item.installment_no}</td>
+                        <td><b>${item.username}</b><br><small>${item.fullname || ''}</small></td>
+                        <td>${item.tumbler_name} (${item.color_name})</td>
+                        <td>฿${Number(item.amount_due).toLocaleString()}</td>
+                        <td>
+                            ${item.slip_image ? `<img src="${slipUrl}" class="slip-thumb" onclick="openSlipModal('${slipUrl}')">` : 'ไม่มีรูป'}
+                        </td>
+                        <td>
+                            <button class="btn btn-approve" onclick="approveSchedule(${item.schedule_id})">✔ อนุมัติ</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        } catch (err) {
+            container.innerHTML = '<p style="color:red;">ไม่สามารถโหลดรายการรออนุมัติได้</p>';
+        }
+    }
+
+    async function approveSchedule(scheduleId) {
+        if (!confirm('ยืนยันการอนุมัติยอดชำระนี้?')) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:3000/api/installments/approve/${scheduleId}`, { method: 'PUT' });
+            if (res.ok) {
+                alert('อนุมัติสำเร็จ!');
+                loadApprovals();
+            } else {
+                alert('เกิดข้อผิดพลาด');
+            }
+        } catch (err) {
+            alert('เชื่อมต่อ Server ไม่สำเร็จ');
+        }
+    }
+
+    async function topupCoins(userId) {
+        const amount = prompt('ระบุจำนวน Coins ที่ต้องการเติม:');
+        if (!amount || isNaN(amount)) return;
+
+        try {
+            const res = await fetch('http://127.0.0.1:3000/api/topup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, amount: parseFloat(amount), admin_id: currentUser.user_id })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('เติมเงินสำเร็จ!');
+                loadUsers();
+            } else {
+                alert(data.error || 'เติมเงินไม่สำเร็จ');
+            }
+        } catch (err) {
+            alert('เชื่อมต่อ Server ไม่สำเร็จ');
+        }
+    }
+
+    async function deleteUser(userId) {
+        if (!confirm('ต้องการลบผู้ใช้นี้ใช่หรือไม่?')) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:3000/api/users/${userId}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert('ลบผู้ใช้สำเร็จ');
+                loadUsers();
+            } else {
+                alert('ลบไม่สำเร็จ');
+            }
+        } catch (err) {
+            alert('เชื่อมต่อ Server ไม่สำเร็จ');
+        }
+    }
+
+    function openSlipModal(url) {
+        document.getElementById('modalSlipImg').src = url;
+        document.getElementById('slipModal').style.display = 'flex';
+    }
+
+    function closeSlipModal() {
+        document.getElementById('slipModal').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadApprovals();
+        loadUsers();
+    });
+  </script>
+</body>
+</html>

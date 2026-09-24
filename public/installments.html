@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายการผ่อนชำระของฉัน - Tumbler Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --navy:#0d2b36; --ink:#3a4d52; --bg:#eef5f6; --card:#ffffff;
+        --steel:#2f7e97; --steel-dark:#1f5f74; --steel-tint:#dcedf1;
+        --copper:#c97c3d; --copper-dark:#a8632c; --copper-tint:#f8e6d3;
+        --mist:#dce8ea; --mist-2:#eef3f4; --radius:16px;
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:'Kanit', sans-serif; background:var(--bg); color:var(--navy); padding:40px 20px; min-height:100vh; }
+    .wrap{ max-width:900px; margin:0 auto; }
+    .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+    h2{ font-size:1.5rem; color:var(--navy); }
+    .home-link{ color:var(--steel-dark); text-decoration:none; font-weight:500; padding:8px 16px; border:1px solid var(--mist); border-radius:99px; background:#fff; }
+    .home-link:hover{ background:var(--mist-2); }
+    
+    .plan-card{ background:var(--card); border-radius:var(--radius); box-shadow:0 15px 35px rgba(13,43,54,0.06); padding:24px; margin-bottom:24px; border:1px solid var(--mist); }
+    .plan-title{ font-size:1.1rem; font-weight:600; color:var(--navy); margin-bottom:8px; }
+    .plan-info{ font-size:0.9rem; color:var(--ink); margin-bottom:16px; }
+    
+    table{ width:100%; border-collapse:collapse; margin-top:10px; background:#fff; border-radius:8px; overflow:hidden; }
+    th, td{ padding:12px; text-align:left; font-size:0.9rem; border-bottom:1px solid var(--mist); vertical-align:middle; }
+    th{ background:var(--steel-tint); color:var(--steel-dark); font-family:'Space Grotesk', sans-serif; }
+    
+    .btn{ border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-family:'Kanit', sans-serif; font-size:0.85rem; font-weight:500; }
+    .btn-pay{ background:var(--copper); color:#fff; }
+    .btn-pay:hover{ background:var(--copper-dark); }
+    .badge{ padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:600; }
+    .badge-pending{ background:#fff3e0; color:#e65100; }
+    .badge-approval{ background:#e3f2fd; color:#01579b; }
+    .badge-paid{ background:#e8f5e9; color:#2e7d32; }
+
+    /* Modal ชำระเงิน */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(13,43,54,0.6); align-items: center; justify-content: center; }
+    .modal-content { background: #fff; padding: 24px; border-radius: 16px; width: 100%; max-width: 420px; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .close-modal { position: absolute; right: 15px; top: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--ink); }
+    .form-control { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid var(--mist); border-radius: 8px; font-family: 'Kanit', sans-serif; }
+    .qr-img { width: 200px; height: auto; border-radius: 12px; margin: 10px auto; border: 1px solid var(--mist); display: block; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h2>📋 ประวัติและตารางผ่อนชำระของฉัน</h2>
+      <a href="index.html" class="home-link">← กลับหน้าหลัก</a>
+    </div>
+
+    <div id="installmentList">กำลังโหลดข้อมูล...</div>
+  </div>
+
+  <!-- Modal เลือกช่องทางและชำระเงิน -->
+  <div id="payModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal()">✕</button>
+      <h3 style="margin-bottom:10px; color:var(--navy);">เลือกช่องทางชำระค่างวด</h3>
+      <p id="modalPayInfo" style="font-size:0.9rem; color:var(--ink); margin-bottom:15px;"></p>
+
+      <div style="text-align:left; margin-bottom:15px;">
+        <label style="font-size:0.85rem; font-weight:600; color:var(--navy);">ช่องทางชำระเงิน</label>
+        <select id="paymentChannel" class="form-control" onchange="togglePaymentChannel()">
+          <option value="Tumbler Coin">Tumbler Coin (หักเหรียญทันที / ไม่ต้องรออนุมัติ)</option>
+          <option value="PromptPay QR">QR พร้อมเพย์ (สแกนโอนและแนบสลิป)</option>
+        </select>
+      </div>
+
+      <!-- ส่วนแสดง QR พร้อมเพย์ + แนบสลิป -->
+      <div id="qrSection" style="display:none; margin-bottom:15px; background:var(--bg); padding:15px; border-radius:12px;">
+        <p style="font-size:0.85rem; font-weight:600; color:var(--steel-dark);">สแกน QR Code เพื่อชำระเงิน</p>
+        <img src="promptpay-qr.png" alt="PromptPay QR Code" class="qr-img">
+        <p style="font-size:0.8rem; color:var(--ink);">ชื่อบัญชี: <b>อมร อุยะพิตัง</b></p>
+        
+        <div style="text-align:left; margin-top:10px;">
+          <label style="font-size:0.8rem; font-weight:600;">แนบหลักฐานการโอนเงิน (สลิป)</label>
+          <input type="file" id="slipFile" accept="image/*" class="form-control">
+        </div>
+      </div>
+
+      <button class="btn btn-pay" style="width:100%; padding:12px; font-size:1rem;" onclick="confirmPayment()">ยืนยันการชำระเงิน</button>
+    </div>
+  </div>
+
+  <script>
+    const userJson = localStorage.getItem('user');
+    const currentUser = userJson ? JSON.parse(userJson) : null;
+
+    if (!currentUser) {
+        alert('กรุณาเข้าสู่ระบบก่อน');
+        window.location.href = 'login.html';
+    }
+
+    let selectedScheduleId = null;
+    let selectedAmount = 0;
+
+    async function loadInstallments() {
+        const container = document.getElementById('installmentList');
+        try {
+            const res = await fetch(`http://127.0.0.1:3000/api/installments/user/${currentUser.user_id}`);
+            const plans = await res.json();
+
+            if (!plans || plans.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--ink); padding:40px;">คุณยังไม่มีรายการผ่อนชำระสินค้า</p>';
+                return;
+            }
+
+            let html = '';
+            for (const plan of plans) {
+                const schRes = await fetch(`http://127.0.0.1:3000/api/installments/schedules/${plan.plan_id}`);
+                const schedules = await schRes.json();
+
+                html += `
+                    <div class="plan-card">
+                        <div class="plan-title">📦 ${plan.tumbler_name} (${plan.color_name}) - ${plan.capacity_oz} oz</div>
+                        <div class="plan-info">ยอดผ่อนรวม: <b>฿${Number(plan.total_price).toLocaleString()}</b> | ระยะเวลา: <b>${plan.months} เดือน</b> | สถานะ: <span style="color:var(--steel-dark); font-weight:600;">${plan.status}</span></div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>งวดที่</th>
+                                    <th>ยอดชำระ</th>
+                                    <th>กำหนดชำระ</th>
+                                    <th>สถานะ</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                schedules.forEach(sch => {
+                    let badgeClass = 'badge-pending';
+                    let statusText = 'รอชำระ';
+                    if (sch.status === 'paid') {
+                        badgeClass = 'badge-paid';
+                        statusText = 'ชำระแล้ว';
+                    } else if (sch.status === 'pending_approval') {
+                        badgeClass = 'badge-approval';
+                        statusText = 'รอตรวจสอบสลิป';
+                    }
+
+                    html += `
+                        <tr>
+                            <td>งวดที่ ${sch.installment_no}</td>
+                            <td>฿${Number(sch.amount_due).toLocaleString()}</td>
+                            <td>${sch.due_date.split('T')[0]}</td>
+                            <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                            <td>
+                                ${sch.status === 'pending' ? `<button class="btn btn-pay" onclick="openPayModal(${sch.schedule_id}, ${sch.amount_due}, ${sch.installment_no})">จ่ายค่างวด</button>` : (sch.status === 'pending_approval' ? '<small style="color:var(--ink);">กำลังตรวจสอบ</small>' : '✔ ชำระแล้ว')}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `</tbody></table></div>`;
+            }
+            container.innerHTML = html;
+        } catch (err) {
+            container.innerHTML = '<p style="color:red; text-align:center;">ไม่สามารถโหลดข้อมูลการผ่อนชำระได้</p>';
+        }
+    }
+
+    function openPayModal(scheduleId, amount, installmentNo) {
+        selectedScheduleId = scheduleId;
+        selectedAmount = amount;
+        document.getElementById('modalPayInfo').innerText = `ชำระค่างวดงวดที่ ${installmentNo} เป็นจำนวนเงิน ฿${Number(amount).toLocaleString()}`;
+        document.getElementById('paymentChannel').value = 'Tumbler Coin';
+        togglePaymentChannel();
+        document.getElementById('payModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('payModal').style.display = 'none';
+    }
+
+    function togglePaymentChannel() {
+        const channel = document.getElementById('paymentChannel').value;
+        const qrSection = document.getElementById('qrSection');
+        if (channel === 'PromptPay QR') {
+            qrSection.style.display = 'block';
+        } else {
+            qrSection.style.display = 'none';
+        }
+    }
+
+    async function confirmPayment() {
+        const channel = document.getElementById('paymentChannel').value;
+
+        if (channel === 'Tumbler Coin') {
+            if (!confirm(`ยืนยันการชำระเงิน ฿${selectedAmount} ด้วย Tumbler Coin?`)) return;
+            try {
+                const res = await fetch('http://127.0.0.1:3000/api/installments/pay-coin', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: currentUser.user_id, schedule_id: selectedScheduleId, amount: selectedAmount })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('ชำระค่างวดด้วย Coin สำเร็จ!');
+                    closeModal();
+                    loadInstallments();
+                } else {
+                    alert(data.error || 'ชำระเงินไม่สำเร็จ');
+                }
+            } catch (err) {
+                alert('เชื่อมต่อ Server ไม่สำเร็จ');
+            }
+        } else {
+            // ผ่าน QR พร้อมเพย์ (ต้องแนบสลิป)
+            const slipInput = document.getElementById('slipFile');
+            if (!slipInput.files || slipInput.files.length === 0) {
+                alert('กรุณาแนบรูปหลักฐานการโอนเงิน (สลิป)');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('slip', slipInput.files[0]);
+            formData.append('channel', 'PromptPay QR');
+
+            try {
+                const res = await fetch(`http://127.0.0.1:3000/api/installments/submit-payment/${selectedScheduleId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('ส่งหลักฐานสำเร็จ! กรุณารอแอดมินตรวจสอบ');
+                    closeModal();
+                    loadInstallments();
+                } else {
+                    alert(data.error || 'ส่งหลักฐานไม่สำเร็จ');
+                }
+            } catch (err) {
+                alert('เชื่อมต่อ Server ไม่สำเร็จ');
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadInstallments);
+  </script>
+</body>
+</html>
